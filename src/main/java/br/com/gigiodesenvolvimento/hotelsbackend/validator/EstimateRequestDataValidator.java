@@ -1,52 +1,64 @@
 package br.com.gigiodesenvolvimento.hotelsbackend.validator;
 
-import static org.apache.commons.lang3.math.NumberUtils.LONG_ZERO;
-
-import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.Validator;
-
 import br.com.gigiodesenvolvimento.hotelsbackend.dto.SearchData;
-import lombok.RequiredArgsConstructor;
 
-@Component
-@RequiredArgsConstructor
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
+import java.util.Set;
+
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.math.NumberUtils.LONG_ZERO;
+import static org.hibernate.validator.internal.engine.ConstraintViolationImpl.forBeanValidation;
+import static org.hibernate.validator.internal.engine.path.PathImpl.createPathFromString;
+
+@ApplicationScoped
 public class EstimateRequestDataValidator {
 
-	private final Validator validator;
+    @Inject
+    Validator validator;
 
-	public void validateCitySearch(SearchData searchData, BindingResult bindingResult) {
+    public void validateCitySearch(SearchData searchData, Set<ConstraintViolation<SearchData>> constraintViolations) {
+        constraintViolations.addAll(validator.validate(searchData));
 
-		validator.validate(searchData, bindingResult);
+        if (isEmpty(constraintViolations)) {
+            if (LONG_ZERO >= searchData.getQtGrowUp()) {
+                constraintViolations
+                        .add(forBeanValidation("Parâmetros inválidos", null, null,
+                                "A quantidade de adultos deve ser maior que zero", null, null,
+                                null, null, createPathFromString("qtGrowUp"), null, null));
+            }
 
-		if (!bindingResult.hasErrors()) {
+            if (LONG_ZERO > searchData.getQtChild()) {
+                constraintViolations
+                        .add(forBeanValidation("Parâmetros inválidos", null, null,
+                                "A quantidade de crianças deve ser maior ou igual a zero", null, null,
+                                null, null, createPathFromString("qtChild"), null, null));
+            }
 
-			if (LONG_ZERO >= searchData.getQtGrowUps()) {
-				bindingResult
-						.addError(new ObjectError("qtdGrowUps", "A quantidade de adultos deve ser maior que zero"));
-			}
+            if (searchData.getStartDate().isAfter(searchData.getEndDate())) {
+                constraintViolations
+                        .add(forBeanValidation("Parâmetros inválidos", null, null,
+                                "A data inicial não pode ser maior que a data final", null, null,
+                                null, null, createPathFromString("startDate"), null, null));
+            }
 
-			if (LONG_ZERO > searchData.getQtChild()) {
-				bindingResult.addError(
-						new ObjectError("qtdChilds", "A quantidade de crianças deve ser maior ou igual a zero"));
-			}
+        }
 
-			if (searchData.getStartDate().isAfter(searchData.getEndDate())) {
-				bindingResult
-						.addError(new ObjectError("startDate", "A data inicial não pode ser maior que a data final"));
-			}
+    }
 
-		}
-	}
+    public void validateCityAndHotelSearch(SearchData searchData,
+                                           Set<ConstraintViolation<SearchData>> constraintViolations) {
+        validateCitySearch(searchData, constraintViolations);
 
-	public void validateCityAndHotelSearch(SearchData searchData, BindingResult bindingResult) {
-		validateCitySearch(searchData, bindingResult);
+        if (searchData.getHotelCode() == null) {
+            constraintViolations
+                    .add(forBeanValidation("Parâmetros inválidos", null, null,
+                            "O código do hotel não pode ser nulo", null, null,
+                            null, null, createPathFromString("hotelCode"), null, null));
+        }
 
-		if (searchData.getHotelCode() == null) {
-			bindingResult.addError(new ObjectError("hotelCode", "O código do hotel não pode ser nulo"));
-		}
-
-	}
+    }
 
 }

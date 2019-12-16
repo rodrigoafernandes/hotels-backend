@@ -27,9 +27,9 @@ public class SearchDataRequest implements Serializable {
 
 	private String endDateRequest;
 
-	private String qtdGrowUpsRequest;
+	private String qtGrowUpRequest;
 
-	private String qtdChildsRequest;
+	private String qtChildRequest;
 
 	private String hotelCodeRequest;
 

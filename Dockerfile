@@ -9,5 +9,8 @@ USER quarkus
 RUN mvn -f /usr/src/app/pom.xml clean package
 
 FROM fabric8/java-alpine-openjdk8-jre
-COPY --from=build /usr/src/app/target/hotels-backend-*.jar /deployments/app.jar
+ENV AB_ENABLED=jmx_exporter
+COPY --from=build /usr/src/app/target/lib/* /deployments/lib/
+COPY --from=build /usr/src/app/target/*-runner.jar /deployments/app.jar
+ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENTRYPOINT [ "/deployments/run-java.sh" ]

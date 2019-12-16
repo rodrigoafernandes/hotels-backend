@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: hotels-backend-ingress
+  namespace: hotels-backend
+spec:
+  rules:
+  - host: k8s-master
+    http:
+      paths:
+      - backend:
+          serviceName: hotels-backend-service
+          servicePort: 8080
+        path: /hotels-backend

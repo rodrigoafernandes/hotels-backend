@@ -1,0 +1,12 @@
+execution:
+  - scenario: find-by-city
+    concurrency: 50
+    ramp-up: 30s
+    hold-for: 1m
+
+scenarios:
+  find-by-city:
+    retrieve-resources: false
+    think-time: 250ms
+    requests:
+      - http://10.96.167.170:8080/estimate/city/1032/hotels/1?startDate=2019-12-10&endDate=2019-12-19&qtGrowUp=2&qtChild=1

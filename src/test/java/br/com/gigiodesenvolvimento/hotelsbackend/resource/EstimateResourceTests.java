@@ -1,100 +1,118 @@
 package br.com.gigiodesenvolvimento.hotelsbackend.resource;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static io.restassured.RestAssured.given;
+import static org.apache.commons.lang3.math.NumberUtils.INTEGER_MINUS_ONE;
+import static org.apache.commons.lang3.math.NumberUtils.INTEGER_ONE;
+import static org.apache.commons.lang3.math.NumberUtils.INTEGER_TWO;
+import static org.apache.commons.lang3.math.NumberUtils.INTEGER_ZERO;
+import static org.apache.http.HttpStatus.*;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import br.com.gigiodesenvolvimento.hotelsbackend.HotelsBackendApplication;
-import br.com.gigiodesenvolvimento.hotelsbackend.config.ServicesConfig;
-import br.com.gigiodesenvolvimento.hotelsbackend.dto.SearchDataRequest;
+import io.quarkus.test.junit.QuarkusTest;
 
-@WebAppConfiguration
-@ActiveProfiles("test")
-@ExtendWith(SpringExtension.class)
-@TestInstance(Lifecycle.PER_CLASS)
-@TestPropertySource(properties = "broker.hotels.url=http://localhost:8546/hotels")
-@ContextConfiguration(classes = { HotelsBackendApplication.class, ServicesConfig.class })
+@QuarkusTest
 public class EstimateResourceTests {
 
-        @Autowired
-        private WebApplicationContext wac;
+	@Test
+	public void givenValidParameters_whenSearchAvailabilityByCity_thenShouldReturnHttpStatusOK() {
+		String cityCode = "1";
+		String startDate = "2019-12-06";
+		String endDate = "2019-12-15";
+		String qtGrowUp = INTEGER_TWO.toString();
+		String qtChild = INTEGER_ONE.toString();
+		given().pathParam("cityCode", cityCode).queryParam("qtGrowUp", qtGrowUp)
+				.queryParam("startDate", startDate).queryParam("endDate", endDate).queryParam("qtChild", qtChild)
+				.when().get("/estimate/city/{cityCode}").then().statusCode(SC_OK);
+	}
+	
+	@Test
+	public void givenInvalidRequestParameters_whenSearchAvailabilityByCity_thenShouldReturnHttpStatusPreconditionFailed() {
+		String cityCode = "A";
+		String startDate = "06/12/2019";
+		String endDate = "2019/12/15";
+		String qtGrowUp = INTEGER_ZERO.toString();
+		String qtChild = INTEGER_MINUS_ONE.toString();
+		given().pathParam("cityCode", cityCode).queryParam("qtGrowUp", qtGrowUp)
+				.queryParam("startDate", startDate).queryParam("endDate", endDate).queryParam("qtChild", qtChild)
+				.when().get("/estimate/city/{cityCode}").then().statusCode(SC_PRECONDITION_FAILED);
+	}
 
-        private MockMvc mvc;
+	@Test
+	public void givenInvalidDataParameters_whenSearchAvailabilityByCity_thenShouldReturnHttpStatusPreconditionFailed() {
+		String cityCode = "1";
+		String startDate = "2019-12-25";
+		String endDate = "2019-12-15";
+		String qtGrowUp = INTEGER_ZERO.toString();
+		String qtChild = INTEGER_MINUS_ONE.toString();
+		given().pathParam("cityCode", cityCode).queryParam("qtGrowUp", qtGrowUp)
+				.queryParam("startDate", startDate).queryParam("endDate", endDate).queryParam("qtChild", qtChild)
+				.when().get("/estimate/city/{cityCode}").then().statusCode(SC_PRECONDITION_FAILED);
+	}
 
-        @BeforeEach
-        void setup() {
-                mvc = MockMvcBuilders.webAppContextSetup(wac).build();
-        }
+	@Test
+	public void givenInvalidCityCode_whenSearchAvailabilityByCity_thenShouldReturnHttpStatusNotFound() {
+		String cityCode = "-1";
+		String startDate = "2019-12-06";
+		String endDate = "2019-12-15";
+		String qtGrowUp = INTEGER_ONE.toString();
+		String qtChild = INTEGER_ZERO.toString();
+		given().pathParam("cityCode", cityCode).queryParam("qtGrowUp", qtGrowUp)
+				.queryParam("startDate", startDate).queryParam("endDate", endDate).queryParam("qtChild", qtChild)
+				.when().get("/estimate/city/{cityCode}").then().statusCode(SC_NOT_FOUND);
+	}
 
-        @Test
-        public void givenInvalidParameters_whenEstimateHotelsByCity_thenShouldReturnHttpStatusPreconditionFailed()
-                        throws Exception {
-                SearchDataRequest searchData = SearchDataRequest.builder().cityCodeRequest("A")
-                                .startDateRequest("01-11-2019").endDateRequest("10-11-2019").qtdGrowUpsRequest("-1")
-                                .qtdChildsRequest("-1").build();
+	@Test
+	public void givenValidParameters_whenSearchAvailabilityByCityAndHotel_thenShouldReturnHttpStatusOK() {
+		String cityCode = "1";
+		String hotelCode = "1";
+		String startDate = "2019-12-06";
+		String endDate = "2019-12-15";
+		String qtGrowUp = INTEGER_TWO.toString();
+		String qtChild = INTEGER_ONE.toString();
+		given().pathParam("cityCode", cityCode).pathParam("hotelCode", hotelCode)
+				.queryParam("qtGrowUp", qtGrowUp).queryParam("startDate", startDate).queryParam("endDate", endDate)
+				.queryParam("qtChild", qtChild).when().get("/estimate/city/{cityCode}/hotels/{hotelCode}")
+			.then().statusCode(SC_OK);
+	}
 
-                mvc.perform(get("/estimate/city/{cityCode}?startDate={startDate}&endDate={endDate}&qtdGrowUps={qtdGrowUps}&qtdChilds={qtdChilds}",
-                                searchData.getCityCodeRequest(), searchData.getStartDateRequest(),
-                                searchData.getEndDateRequest(), searchData.getQtdGrowUpsRequest(),
-                                searchData.getQtdChildsRequest())).andExpect(status().isPreconditionFailed());
+	@Test
+	public void givenInvalidRequestParameters_whenSearchAvailabilityByCityAndHotel_thenShouldReturnHttpStatusPreconditionFailed() {
+		String cityCode = "A";
+		String hotelCode = "B";
+		String startDate = "06/12/2019";
+		String endDate = "2019/12/15";
+		String qtGrowUp = "C";
+		String qtChild = "D";
+		given().pathParam("cityCode", cityCode).pathParam("hotelCode", hotelCode).queryParam("qtGrowUp", qtGrowUp)
+				.queryParam("startDate", startDate).queryParam("endDate", endDate).queryParam("qtChild", qtChild)
+				.when().get("/estimate/city/{cityCode}/hotels/{hotelCode}").then().statusCode(SC_PRECONDITION_FAILED);
+	}
 
-        }
+	@Test
+	public void givenInvalidDataParameters_whenSearchAvailabilityByCityAndHotel_thenShouldReturnHttpStatusPreconditionFailed() {
+		String cityCode = "1";
+		String hotelCode = " ";
+		String startDate = "2019-12-25";
+		String endDate = "2019-12-15";
+		String qtGrowUp = INTEGER_ZERO.toString();
+		String qtChild = INTEGER_MINUS_ONE.toString();
+		given().pathParam("cityCode", cityCode).pathParam("hotelCode", hotelCode).queryParam("qtGrowUp", qtGrowUp)
+				.queryParam("startDate", startDate).queryParam("endDate", endDate).queryParam("qtChild", qtChild)
+				.when().get("/estimate/city/{cityCode}/hotels/{hotelCode}").then().statusCode(SC_PRECONDITION_FAILED);
+	}
 
-        @Test
-        public void givenValidParameters_whenEstimateHotelsByCity_thenShouldReturnHttpStatusOk() throws Exception {
-                SearchDataRequest searchData = SearchDataRequest.builder().cityCodeRequest("1032")
-                                .startDateRequest("2019-11-01").endDateRequest("2019-11-10").qtdGrowUpsRequest("1")
-                                .qtdChildsRequest("0").build();
-
-                mvc.perform(get("/estimate/city/{cityCode}?startDate={startDate}&endDate={endDate}&qtdGrowUps={qtdGrowUps}&qtdChilds={qtdChilds}",
-                                searchData.getCityCodeRequest(), searchData.getStartDateRequest(),
-                                searchData.getEndDateRequest(), searchData.getQtdGrowUpsRequest(),
-                                searchData.getQtdChildsRequest())).andExpect(status().isOk());
-
-        }
-
-        @Test
-        public void givenInvalidParameters_whenEstimateHotelsByCityAndHotel_thenShouldReturnHttpStatusNotFound()
-                        throws Exception {
-                SearchDataRequest searchData = SearchDataRequest.builder().cityCodeRequest("1032")
-                                .startDateRequest("2019-11-01").endDateRequest("2019-11-10").qtdGrowUpsRequest("1")
-                                .qtdChildsRequest("0").hotelCodeRequest("2").build();
-
-                mvc.perform(get("/estimate/city/{cityCode}/hotels/{hotelCode}?startDate={startDate}&endDate={endDate}&qtdGrowUps={qtdGrowUps}&qtdChilds={qtdChilds}",
-                                searchData.getCityCodeRequest(), searchData.getHotelCodeRequest(),
-                                searchData.getStartDateRequest(), searchData.getEndDateRequest(),
-                                searchData.getQtdGrowUpsRequest(), searchData.getQtdChildsRequest()))
-                                .andExpect(status().isNotFound());
-
-        }
-
-        @Test
-        public void givenValidParameters_whenEstimateHotelsByCityAndHotel_thenShouldReturnHttpStatusOk()
-                        throws Exception {
-                SearchDataRequest searchData = SearchDataRequest.builder().cityCodeRequest("1032")
-                                .startDateRequest("2019-11-01").endDateRequest("2019-11-10").qtdGrowUpsRequest("1")
-                                .qtdChildsRequest("0").hotelCodeRequest("1").build();
-
-                mvc.perform(get("/estimate/city/{cityCode}/hotels/{hotelCode}?startDate={startDate}&endDate={endDate}&qtdGrowUps={qtdGrowUps}&qtdChilds={qtdChilds}",
-                                searchData.getCityCodeRequest(), searchData.getHotelCodeRequest(),
-                                searchData.getStartDateRequest(), searchData.getEndDateRequest(),
-                                searchData.getQtdGrowUpsRequest(), searchData.getQtdChildsRequest()))
-                                .andExpect(status().isOk());
-
-        }
+	@Test
+	public void givenInvalidCityCode_whenSearchAvailabilityByCityAndHotel_thenShouldReturnHttpStatusNotFound() {
+		String cityCode = "1";
+		String hotelCode = "3";
+		String startDate = "2019-12-06";
+		String endDate = "2019-12-15";
+		String qtGrowUp = INTEGER_ONE.toString();
+		String qtChild = INTEGER_ZERO.toString();
+		given().pathParam("cityCode", cityCode).pathParam("hotelCode", hotelCode).queryParam("qtGrowUp", qtGrowUp)
+				.queryParam("startDate", startDate).queryParam("endDate", endDate).queryParam("qtChild", qtChild)
+				.when().get("/estimate/city/{cityCode}/hotels/{hotelCode}").then().statusCode(SC_NOT_FOUND);
+	}
 
 }

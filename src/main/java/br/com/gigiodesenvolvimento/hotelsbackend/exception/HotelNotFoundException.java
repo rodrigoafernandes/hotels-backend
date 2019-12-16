@@ -1,17 +1,10 @@
 package br.com.gigiodesenvolvimento.hotelsbackend.exception;
 
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+public class HotelNotFoundException extends RuntimeException {
 
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.client.HttpClientErrorException;
+	private static final long serialVersionUID = 4431339228103630900L;
 
-@ResponseStatus(NOT_FOUND)
-public class HotelNotFoundException extends HttpClientErrorException {
-
-    private static final long serialVersionUID = 1681640448359695589L;
-
-    public HotelNotFoundException() {
-        super(NOT_FOUND, "Não foram localizados hotéis para a cidade informada");
+	public HotelNotFoundException() {
+        super("Não foram localizados hotéis para a cidade informada");
     }
-
 }

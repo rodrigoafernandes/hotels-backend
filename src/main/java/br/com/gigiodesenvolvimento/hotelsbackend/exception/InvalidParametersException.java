@@ -1,26 +1,31 @@
 package br.com.gigiodesenvolvimento.hotelsbackend.exception;
 
-import static org.springframework.http.HttpStatus.PRECONDITION_FAILED;
+import br.com.gigiodesenvolvimento.hotelsbackend.dto.ErrorMessageDTO;
+import br.com.gigiodesenvolvimento.hotelsbackend.dto.SearchData;
 
+import javax.validation.ConstraintViolation;
 import java.util.List;
+import java.util.Set;
 
-import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.client.HttpClientErrorException;
+import static java.util.stream.Collectors.toList;
 
-import lombok.Getter;
 
-@Getter
-@ResponseStatus(PRECONDITION_FAILED)
-public class InvalidParametersException extends HttpClientErrorException {
+public class InvalidParametersException extends RuntimeException {
 
-    private static final long serialVersionUID = 1735914647987101163L;
+	private static final long serialVersionUID = 8369374426344887730L;
 
-    private List<ObjectError> listErrors;
+	private Set<ConstraintViolation<SearchData>> constraintViolations;
 
-    public InvalidParametersException(List<ObjectError> list) {
-        super(PRECONDITION_FAILED);
-        listErrors = list;
+    public InvalidParametersException(Set<ConstraintViolation<SearchData>> constraintViolations) {
+        this.constraintViolations = constraintViolations;
+    }
+
+    public List<ErrorMessageDTO> getErrors() {
+        return constraintViolations.stream().map(this::convert).collect(toList());
+    }
+
+    private ErrorMessageDTO convert(ConstraintViolation<SearchData> violation) {
+        return ErrorMessageDTO.builder().property(violation.getPropertyPath().toString()).message(violation.getMessage()).build();
     }
 
 }

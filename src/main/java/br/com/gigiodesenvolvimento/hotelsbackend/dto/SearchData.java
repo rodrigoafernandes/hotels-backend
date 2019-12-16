@@ -1,9 +1,11 @@
 package br.com.gigiodesenvolvimento.hotelsbackend.dto;
 
-import lombok.AllArgsConstructor;
+
+
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -35,7 +37,7 @@ public class SearchData implements Serializable {
 	private LocalDate endDate;
 
 	@NotNull
-	private Long qtGrowUps;
+	private Long qtGrowUp;
 
 	@NotNull
 	private Long qtChild;
