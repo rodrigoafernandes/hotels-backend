@@ -24,6 +24,7 @@
     <mockito-core.version>2.21.0</mockito-core.version>
     <mockito-junit-jupiter.version>2.23.0</mockito-junit-jupiter.version>
     <lombok.version>1.18.10</lombok.version>
+    <configsource-base.version>1.0.9</configsource-base.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -52,6 +53,16 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-openapi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.microprofile-ext.config-ext</groupId>
+      <artifactId>configsource-base</artifactId>
+      <version>${configsource-base.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ecwid.consul</groupId>
+      <artifactId>consul-api</artifactId>
+      <version>1.4.2</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
