@@ -55,9 +55,10 @@
       <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
     <dependency>
-      <groupId>br.com.cvc.corp</groupId>
-      <artifactId>microprofile-quarkus-consul</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <groupId>org.microprofile-ext.config-ext</groupId>
+      <artifactId>configsource-consul</artifactId>
+      <version>1.0.9</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>

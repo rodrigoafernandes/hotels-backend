@@ -4,7 +4,6 @@ import br.com.gigiodesenvolvimento.hotelsbackend.dto.ErrorMessageDTO;
 import br.com.gigiodesenvolvimento.hotelsbackend.dto.HotelAvailDTO;
 import br.com.gigiodesenvolvimento.hotelsbackend.dto.SearchDataRequest;
 import br.com.gigiodesenvolvimento.hotelsbackend.service.EstimateService;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -13,7 +12,6 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -28,9 +26,6 @@ public class EstimateResource {
 
 	@Inject
 	EstimateService estimateService;
-
-	@ConfigProperty(name = "/hotels-backend/config/broker.cvc.url")
-	Provider<String> brokerUrl;
 
 	@GET
 	@Tag(name = "Estimate")
@@ -72,13 +67,6 @@ public class EstimateResource {
 			@QueryParam("endDate") String endDate, @QueryParam("qtGrowUp") String qtGrowUp,
 			@QueryParam("qtChild") String qtChild) {
 		return estimateService.findByCityAndHotel(SearchDataRequest.builder().cityCodeRequest(cityCode).hotelCodeRequest(hotelCode).startDateRequest(startDate).endDateRequest(endDate).qtGrowUpRequest(qtGrowUp).qtChildRequest(qtChild).build());
-	}
-
-	@GET
-	@Path("/config-consul")
-	@Produces(APPLICATION_JSON)
-	public ErrorMessageDTO getConsul() {
-		return ErrorMessageDTO.builder().message(brokerUrl.get()).build();
 	}
 
 }
