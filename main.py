@@ -1,7 +1,10 @@
 from fastapi import FastAPI
 from responsehotelsmodel import HotelAvail
+from estimateservice import Estimate
 
 app = FastAPI()
+service = Estimate()
+
 
 @app.get("/estimate/city/{city_code}", response_model=HotelAvail)
 def home(city_code: int, startDate: str, endDate: str, qtGrowUp: int, qtChild: int):
@@ -10,7 +13,7 @@ def home(city_code: int, startDate: str, endDate: str, qtGrowUp: int, qtChild: i
             "rooms": [
                 {"roomID": 0, "categoryName": "STD", "totalPrice": 100.5,
                  "priceDetail": {
-                    "pricePerDayChild": 32.5,
+                     "pricePerDayChild": 32.5,
                      "pricePerDayAdult": 77.5
                  }}
             ]}
