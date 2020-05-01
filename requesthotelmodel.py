@@ -10,30 +10,31 @@ class SearchDataRequest(BaseModel):
     qtChildRequest: str
     hotelCodeRequest: str
 
-    def __init__(self, cityCodeRequest, startDateRequest, endDateRequest, qtGrowUpRequest, qtChildRequest,
-                 hotelCodeRequest):
+    def __init__(self, city_code_request: str, start_date_request: str, end_date_request: str, qt_grow_up_request: str,
+                 qt_child_request: str, hotel_code_request=None):
         super().__init__()
-        self.cityCodeRequest = cityCodeRequest
-        self.startDateRequest = startDateRequest
-        self.endDateRequest = endDateRequest
-        self.qtGrowUpRequest = qtGrowUpRequest
-        self.qtChildRequest = qtChildRequest
-        self.hotelCodeRequest = hotelCodeRequest
+        self.cityCodeRequest = city_code_request
+        self.startDateRequest = start_date_request
+        self.endDateRequest = end_date_request
+        self.qtGrowUpRequest = qt_grow_up_request
+        self.qtChildRequest = qt_child_request
+        self.hotelCodeRequest = hotel_code_request
 
 
 class SearchData(BaseModel):
     cityCode: int
-    startDate: datetime
-    endDate: datetime
+    startDate: datetime.date
+    endDate: datetime.date
     qtGrowUp: int
     qtChild: int
     hotelCode: int
 
-    def __init__(self, cityCode, startDate, endDate, qtGrowUp, qtChild, hotelCode):
+    def __init__(self, city_code: int, start_date: datetime.date, end_date: datetime.date, qt_grow_up: int,
+                 qt_child: int, hotel_code=None):
         super().__init__()
-        self.cityCode = cityCode
-        self.startDate = startDate
-        self.endDate = endDate
-        self.qtGrowUp = qtGrowUp
-        self.qtChild = qtChild
-        self.hotelCode = hotelCode
+        self.cityCode = city_code
+        self.startDate = start_date
+        self.endDate = end_date
+        self.qtGrowUp = qt_grow_up
+        self.qtChild = qt_child
+        self.hotelCode = hotel_code
