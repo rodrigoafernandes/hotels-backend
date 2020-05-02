@@ -5,4 +5,4 @@ class MarkupCalculator:
 
     @staticmethod
     def calculate(value_to_markup: float):
-        return value_to_markup * default_markup
+        return value_to_markup / default_markup
