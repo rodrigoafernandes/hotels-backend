@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from estimateservice import Estimate
-from requesthotelmodel import SearchDataRequest
-from responsehotelsmodel import HotelAvail
+from estimate import estimate_city
+from models.request.requestsHotel import SearchDataRequest
+from models.response.responsesHotels import HotelAvail
 from typing import List
 
 app = FastAPI()
@@ -12,4 +12,4 @@ def home(city_code: str, startDate: str, endDate: str, qtGrowUp: str, qtChild: s
     search_data_request = SearchDataRequest(cityCodeRequest=city_code, startDateRequest=startDate,
                                             endDateRequest=endDate, qtGrowUpRequest=qtGrowUp,
                                             qtChildRequest=qtChild)
-    return Estimate.estimate_city(search_data_request=search_data_request)
+    return estimate_city(search_data_request=search_data_request)
