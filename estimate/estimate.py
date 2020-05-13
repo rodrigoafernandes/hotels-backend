@@ -26,7 +26,8 @@ def __available_rooms(avail_rooms: List[Room], search_data: SearchData):
     for room in avail_rooms:
         room_adult_price_with_tax = markup.calculate(room['price']['adult'])
         room_child_price_with_tax = markup.calculate(room['price']['child'])
-        total_price = (room_adult_price_with_tax * qtd_days.days) + (room_child_price_with_tax * qtd_days.days)
+        total_price = round(((room_adult_price_with_tax * qtd_days.days) + (room_child_price_with_tax * qtd_days.days)),
+                            4)
         price_detail = PriceDetail(pricePerDayAdult=room_adult_price_with_tax,
                                    pricePerDayChild=room_child_price_with_tax)
         rooms.append(RoomAvail(roomID=room['roomID'], categoryName=room['categoryName'], totalPrice=total_price,

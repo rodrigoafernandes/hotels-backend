@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from estimate import estimate_city
-from models.request.requestsHotel import SearchDataRequest
-from models.response.responsesHotels import HotelAvail
+from models import HotelAvail, SearchDataRequest
 from typing import List
 
 app = FastAPI()
