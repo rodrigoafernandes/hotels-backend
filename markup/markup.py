@@ -1,4 +1,7 @@
-default_markup = 0.7
+from os import environ
+
+
+default_markup = float(environ['DEFAULT_MARKUP'])
 
 
 def calculate(value_to_markup: float):

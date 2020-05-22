@@ -1,13 +1,11 @@
-FROM quay.io/quarkus/centos-quarkus-maven:19.0.2 AS build
-COPY src /usr/src/app/src
-COPY pom.xml /usr/src/app
-COPY checkstyle.xml /usr/src/app
-COPY pmd-ruleset.xml /usr/src/app
-USER root
-RUN chown -R quarkus /usr/src/app
-USER quarkus
-RUN mvn -f /usr/src/app/pom.xml clean package
+FROM ubuntu:18.04
 
-FROM fabric8/java-alpine-openjdk8-jre
-COPY --from=build /usr/src/app/target/hotels-backend-*.jar /deployments/app.jar
-ENTRYPOINT [ "/deployments/run-java.sh" ]
+COPY . /app
+
+WORKDIR /app
+
+RUN apt-get update && apt-get upgrade -y && apt-get install python3-pip -y && apt-get install python3-distutils -y && python3 -m pip install -r requirements.txt
+
+EXPOSE 8080
+
+CMD ["python3", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
