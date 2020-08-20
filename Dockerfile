@@ -1,11 +1,10 @@
-FROM ubuntu:18.04
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 
-COPY . /app
-
-WORKDIR /app
-
-RUN apt-get update && apt-get upgrade -y && apt-get install python3-pip -y && apt-get install python3-distutils -y && python3 -m pip install -r requirements.txt
+ENV PORT="8080"
+ENV WORKERS_PER_CORE="20"
 
 EXPOSE 8080
 
-CMD ["python3", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+COPY . /app
+
+RUN python3 -m pip install -r /app/requirements.txt
