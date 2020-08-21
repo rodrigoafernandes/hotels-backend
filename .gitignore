@@ -37,4 +37,4 @@ env
 
 ### Coverage
 .coverage
-coverage.json
+coverage.*
