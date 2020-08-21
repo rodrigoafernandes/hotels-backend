@@ -1,4 +1,4 @@
-class HotelNotFound(Exception):
+class HotelNotFound(Exception):  # pragma: no cover
 
     def __init__(self, *args):
         if args:

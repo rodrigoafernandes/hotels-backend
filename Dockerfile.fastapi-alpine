@@ -1,0 +1,23 @@
+FROM python:3.8-alpine as base
+
+FROM base as builder
+
+RUN mkdir /hotels-backend
+
+WORKDIR /hotels-backend
+
+COPY requirements.txt /requirements.txt
+
+RUN python3 -m pip install --prefix=/hotels-backend -r /requirements.txt
+
+FROM base
+
+COPY --from=builder /hotels-backend /usr/local
+
+COPY . /app
+
+WORKDIR /app
+
+EXPOSE 8080
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]

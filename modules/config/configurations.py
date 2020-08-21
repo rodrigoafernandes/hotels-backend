@@ -1,7 +1,7 @@
 from os import environ
 
 
-class AppVariables:
+class AppVariables:  # pragma: no cover
 
     def __init__(self):
         self.__markup = float(environ['DEFAULT_MARKUP'])
