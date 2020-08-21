@@ -1,1 +1,1 @@
-from .modules import BrokerTest, ConverterTest
+from .modules import BrokerTest, ConverterTest, MarkupTest, EstimateTest
